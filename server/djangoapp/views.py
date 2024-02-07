@@ -48,13 +48,31 @@ def logout_request(request):
     return redirect('djangoapp:index')
 
 # Create a `registration_request` view to handle sign up request
-# def registration_request(request):
-# ...
+def registration_request(request):
+    context = {}
+    if request.method == 'GET':
+        return render(request, 'djangoapp/registration.html', context)
+    elif request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('psw')
+        first_name = request.POST.get('firstname')
+        last_name = request.POST.get('lastname')
+
+        if not User.objects.filter(username=username).exists():
+            user = User.objects.create_user(
+                username=username, first_name=first_name, last_name=last_name, password=password)
+            login(request, user)
+            return redirect("djangoapp:index")
+        else:
+            messages.error(request, 'Username already exists.')
+            return render(request, 'djangoapp/registration.html', context)
+
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
-    context = {}
-    if request.method == "GET":
-        return render(request, 'djangoapp/index.html', context)
+        context = {}
+        if request.method == "GET":
+            return render(request, 'djangoapp/index.html', context)
+        return render(request, 'djangoapp/registration.html')
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
