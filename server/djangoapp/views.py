@@ -66,7 +66,7 @@ def registration_request(request):
         else:
             messages.error(request, 'Username already exists.')
             return render(request, 'djangoapp/registration.html', context)
-
+        
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
         context = {}
