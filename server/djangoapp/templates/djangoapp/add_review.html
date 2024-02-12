@@ -8,9 +8,54 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
-
 </head>
-    <body>
-    <!--Add review form here -->
-    </body>
+<body>
+
+<div class="container mt-5">
+    <h2>Submit a Review for {{ dealer.name }}</h2>
+
+    <form action="{% url 'djangoapp:add_review' id=dealer.id %}" method="POST">
+        {% csrf_token %}
+
+        <!-- Review content -->
+        <div class="form-group">
+            <label for="content">Review:</label>
+            <textarea class="form-control" id="content" name="content" rows="2" required></textarea>
+        </div>
+
+        <!-- Purchase check -->
+        <div class="form-group form-check">
+            <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck">
+            <label class="form-check-label" for="purchasecheck">Purchased from this dealer</label>
+        </div>
+
+        <!-- Car selection dropdown -->
+        <div class="form-group">
+            <label for="car">Select a car:</label>
+            <select name="car" id="car" class="form-select" required>
+                {% for car in cars %}
+                    <option value="{{ car.id }}">{{ car.name }} - {{ car.make.name }} - {{ car.year|date:"Y" }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Purchase date -->
+        <div class="form-group">
+            <label for="purchasedate">Purchase date:</label>
+            <input class="date-own form-control" type="text" name="purchasedate" id="purchasedate" required>
+        </div>
+
+        <!-- Datepicker script -->
+        <script type="text/javascript">
+            $('.date-own').datepicker({
+                format: 'mm/dd/yyyy'
+            });
+        </script>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
+</div>
+
+</body>
 </html>
