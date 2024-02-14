@@ -16,7 +16,7 @@
     />
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
-  </head>
+</head>
 
   <body>
     <!-- Navigation Bar -->
@@ -81,20 +81,23 @@
                 placeholder="Password"
               />
               <button
-                class="btn btn-outline-success my-2 my-sm-0"
+                class="btn btn-outline-success my-2 my-sm-0 mr-2"
                 type="submit"
               >
                 Login
               </button>
             </form>
           </li>
+          <li class="nav-item">
+            <a class="btn btn-primary my-2 my-sm-0" href="{% url 'djangoapp:registration' %}">Signup</a>
+        </li>
           {% endif %}
         </ul>
       </div>
     </nav>
 
-       <!-- Dealer Table -->
-       <table class="table" id="table" data-filter-control="true">
+    <!-- Dealer Table -->
+    <table class="table" id="table" data-filter-control="true">
         <thead>
             <tr>
                 <th data-field="id">ID</th>
@@ -113,19 +116,19 @@
                     <td>{{ dealer.city }}</td>
                     <td>{{ dealer.address }}</td>
                     <td>{{ dealer.zip }}</td>
-                    <td>{{ dealer.state }}</td>
+                    <td>{{ dealer.st }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
-  </body>
-
-      <!-- JavaScript for Bootstrap Table -->
+    <!-- JavaScript for Bootstrap Table -->
     <script>
-     $(function() {
-        $('#table').bootstrapTable();
-     });
-    </script>  
+        $(function() {
+            $('#table').bootstrapTable();
+        });
+    </script>
+</body>
 
 </html>
+Now, the Boots

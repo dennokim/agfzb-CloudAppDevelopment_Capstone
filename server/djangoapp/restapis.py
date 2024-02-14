@@ -6,8 +6,6 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_watson.natural_language_understanding_v1 import Features,SentimentOptions
 import time
- 
-
 
 def get_request(url, **kwargs):
     api_key = kwargs.get("api_key")
@@ -59,83 +57,83 @@ def post_request(url, payload, **kwargs):
 
 def get_dealers_from_cf(url, **kwargs):
     results = []
-    state = kwargs.get("state")
-    if state:
-        json_result = get_request(url, state=state)
-    else:
-        json_result = get_request(url)
-
+    # Call get_request with a URL parameter
+    json_result = get_request(url)
     if json_result:
+        # Get the row list in JSON as dealers
         dealers = json_result
+        # For each dealer object
         for dealer in dealers:
-            # Check if dealer is a dictionary before accessing "doc" key
-            if isinstance(dealer, dict) and "doc" in dealer:
-                dealer_doc = dealer["doc"]
-                dealer_obj = CarDealer(
-                    address=dealer_doc["address"],
-                    city=dealer_doc["city"],
-                    id=dealer_doc["id"],
-                    lat=dealer_doc["lat"],
-                    long=dealer_doc["long"],
-                    full_name=dealer_doc["full_name"],
-                    st=dealer_doc["st"],
-                    zip=dealer_doc["zip"]
-                )
-                results.append(dealer_obj)
-
-    return results
-
+            # Get its content in 'doc' object
+            dealer_doc = dealer
+            # Create a CarDealer object with values in 'doc' object
+            dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"], full_name=dealer_doc["full_name"],
+                                  id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"], short_name=dealer_doc["short_name"],
+                                  st=dealer_doc["st"], zip=dealer_doc["zip"])
+            results.append(dealer_obj)
+        return results
 
 
 def get_dealer_by_id_from_cf(url, id):
     json_result = get_request(url, id=id)
-    print('json_result from line 54',json_result)
+    print('json_result from line 54', json_result)
 
-    if json_result:
-        dealers = json_result
-        
-    
-        dealer_doc = dealers[0]
-        dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"],
-                                id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"], full_name=dealer_doc["full_name"],
-                                
-                                st=dealer_doc["st"], zip=dealer_doc["zip"])
-    return dealer_obj
+    if json_result and isinstance(json_result, list) and len(json_result) > 0:
+        dealer_doc = json_result[0]
+        dealer_obj = CarDealer(
+            address=dealer_doc.get("address", ""),
+            city=dealer_doc.get("city", ""),
+            id=dealer_doc.get("id", ""),
+            lat=dealer_doc.get("lat", ""),
+            long=dealer_doc.get("long", ""),
+            full_name=dealer_doc.get("full_name", ""),
+            st=dealer_doc.get("st", ""),
+            zip=dealer_doc.get("zip", "")
+        )
+        return dealer_obj
+    else:
+        # Handle errors, for example:
+        print("Error: Invalid or empty response.")
+        return None
+
 
 
 def get_dealer_reviews_from_cf(url, **kwargs):
     results = []
     id = kwargs.get("id")
+    
     if id:
         json_result = get_request(url, id=id)
     else:
         json_result = get_request(url)
-    # print(json_result)
-    if json_result:
-        print("line 105",json_result)
-        reviews = json_result["data"]["docs"]
+    
+    # Check if the response is a string
+    if isinstance(json_result, str):
+        print("Error: API response is a string, not JSON.")
+        return results
+    
+    try:
+        # Assuming the expected structure, if "data" and "docs" are present
+        reviews = json_result.get("data", {}).get("docs", [])
+        
         for dealer_review in reviews:
-            review_obj = DealerReview(dealership=dealer_review["dealership"],
-                                   name=dealer_review["name"],
-                                   purchase=dealer_review["purchase"],
-                                   review=dealer_review["review"])
-            if "id" in dealer_review:
-                review_obj.id = dealer_review["id"]
-            if "purchase_date" in dealer_review:
-                review_obj.purchase_date = dealer_review["purchase_date"]
-            if "car_make" in dealer_review:
-                review_obj.car_make = dealer_review["car_make"]
-            if "car_model" in dealer_review:
-                review_obj.car_model = dealer_review["car_model"]
-            if "car_year" in dealer_review:
-                review_obj.car_year = dealer_review["car_year"]
+            review_obj = DealerReview(dealership=dealer_review.get("dealership", ""),
+                                   name=dealer_review.get("name", ""),
+                                   purchase=dealer_review.get("purchase", ""),
+                                   review=dealer_review.get("review", ""))
+            
+            # Extract other attributes accordingly
             
             sentiment = analyze_review_sentiments(review_obj.review)
-            print(sentiment)
             review_obj.sentiment = sentiment
             results.append(review_obj)
+    except Exception as e:
+        print(f"Error processing JSON response: {e}")
+        if isinstance(json_result, str):
+            print(f"API response (string): {json_result}")
+            print("Error: API response is a string, not JSON.")
+        return results
 
-    return results
 
 
 def analyze_review_sentiments(text):
