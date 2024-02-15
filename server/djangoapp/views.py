@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 #from .models import CarModel, CarMake, CarDealer, DealerReview, ReviewPost
@@ -9,6 +9,7 @@ from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+import requests
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -76,7 +77,7 @@ def logout_request(request):
 def get_dealerships(request):
     if request.method == "GET":
         context = {}
-        url = "https://deniskimani2-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        url = "https://ksundararaja-3000.theladockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
         dealerships = get_dealers_from_cf(url)
         context["dealership_list"] = dealerships
         return render(request, 'djangoapp/index.html', context)
@@ -86,11 +87,11 @@ def get_dealerships(request):
 def get_dealer_details(request, id):
     if request.method == "GET":
         context = {}
-        dealer_url = "https://deniskimani2-3000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        dealer_url = "https://ksundararaja-3000.theladockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
         dealer = get_dealer_by_id_from_cf(dealer_url, id=id)
         context["dealer"] = dealer
 
-        review_url = "https://deniskimani2-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
+        review_url="https://ksundararaja-5000.theladockernext-1-labs-prod-theiakes-4-tor01.proxy.cognitiveclass.al/api/get_reviews"
         reviews = get_dealer_reviews_from_cf(review_url, id=id)
         print(reviews)
         context["reviews"] = reviews
