@@ -136,8 +136,8 @@ def get_dealer_by_id_from_cf(url, id):
     return results[0] if results else None
 
 def analyze_review_sentiments(text):
-    url = "https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/a7d55b2b-30e4-4d58-91a1-bd84cb7b5c14"
-    api_key = "S8Ncd3903aq7KoTo6MJPqi3nrpIvivQuWJdwqmMQifFK"
+    url = "https://api.au-syd.natural-language-understanding.watson.cloud.ibm.com/instances/56fea935-0788-4ffb-879b-751ef2a1ec31"
+    api_key = "w9icJWu9HBW5aSzfa9Cc9la23Qm8gt9D6wKq06igpG3b"
     authenticator = IAMAuthenticator(api_key)
     natural_language_understanding = NaturalLanguageUnderstandingV1(version='2021-08-01',authenticator=authenticator)
     natural_language_understanding.set_service_url(url)
